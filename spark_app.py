@@ -62,5 +62,3 @@ if __name__ == '__main__':
     tags_totals.foreachRDD(process_rdd)
     ssc.start()
     ssc.awaitTermination()
-
-# start()

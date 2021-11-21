@@ -2,6 +2,8 @@ import time
 from socket import *
 import socket
 import traceback
+import argparse
+import os
 
 import requests
 
@@ -17,7 +19,7 @@ def auth():
                 return x[6:]
 
 
-def create_url(keyword, end_date, max_results=10):
+def create_url(keyword, end_date, next_token=None, max_results=10):
     search_url = "https://api.twitter.com/2/tweets/search/recent"
 
     # change params based on the endpoint you are using
@@ -25,13 +27,12 @@ def create_url(keyword, end_date, max_results=10):
                     'end_time': end_date,
                     'max_results': max_results,
                     'tweet.fields': 'id,text,author_id,geo,conversation_id,created_at,lang,entities',
-                    'next_token': {}
+                    'next_token': next_token
                     }
     return (search_url, query_params)
 
 
-def get_response(url, headers, params, next_token=None):
-    params['next_token'] = next_token
+def get_response(url, headers, params):
     response = requests.get(url, headers=headers, params=params)
     print(f"Endpoint Response Code: {str(response.status_code)}")
     if response.status_code != 200:
@@ -39,16 +40,16 @@ def get_response(url, headers, params, next_token=None):
     return response.json()
 
 
-def get_tweet_data(next_token=None):
+def get_tweet_data(next_token=None, query='corona'):
     # Inputs for the request
     bearer_token = auth()
     headers = {"Authorization": f"Bearer {bearer_token}"}
 
-    keyword = "corona lang:en has:hashtags"
-    end_time = "2021-11-15T00:00:00.000Z"
+    keyword = f"{query} lang:en has:hashtags"
+    end_time = "2021-11-17T00:00:00.000Z"
 
-    url: tuple = create_url(keyword, end_time, max_results=20)
-    json_response = get_response(url=url[0], headers=headers, params=url[1], next_token=next_token)
+    url: tuple = create_url(keyword, end_time, next_token=next_token, max_results=20)
+    json_response = get_response(url=url[0], headers=headers, params=url[1])
 
     # print(json.dumps(json_response, indent=4))
     with open('test.txt', 'w+') as teeee:
@@ -74,7 +75,22 @@ def send_tweets_to_spark(http_resp, tcp_connection):
             traceback.print_exc()
 
 
+def input_term():
+    parser = argparse.ArgumentParser(description='Spark Tweet analyzer')
+    parser.add_argument('-p', '--pages', type=int, help="No of pages to query", required=True)
+    parser.add_argument('-k', '--keywords', type=str, help="List of keywords to query", required=True)
+    # Parse and print the results
+    args = parser.parse_args()
+
+    return args.pages, args.keywords
+
+
 if __name__ == '__main__':
+    # no_of_pages = 2
+    # queries = ['corona', 'bitcoin', 'gaming', 'Android']
+    no_of_pages, queries = input_term()
+    queries = str(queries).split(" ")
+
     TCP_IP = "127.0.0.1"
     TCP_PORT = 9009
 
@@ -82,21 +98,16 @@ if __name__ == '__main__':
     s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     s.bind((TCP_IP, TCP_PORT))
     s.listen(1)
-
     print("Waiting for the TCP connection...")
 
     conn, addr = s.accept()
     print("Connected successfully... Starting getting tweets.")
 
     next_token = None
-    for _ in range(2):
-        print(f"\n\n\n\n\nProcessing Page{_}\n\n\nn\\n")
-        resp = get_tweet_data(next_token=next_token)
-        next_token = resp['meta']['next_token']
-        send_tweets_to_spark(resp, conn)
-        time.sleep(3)
-
-# ------------------------------------------------------------------ #
-
-# get_tweet_data()
-# start()
+    for _ in range(no_of_pages):
+        for query in queries:
+            print(f"\n\n\n\n\nProcessing Page {_} for keyword {query}\n\n\n\n\n")
+            resp = get_tweet_data(next_token=next_token, query=query)
+            next_token = resp['meta']['next_token']
+            send_tweets_to_spark(http_resp=resp, tcp_connection=conn)
+            time.sleep(5)

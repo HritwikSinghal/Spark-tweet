@@ -12,9 +12,6 @@ values = []
 
 @app.route("/")
 def chart():
-    global labels, values
-    # labels = []
-    # values = []
     return render_template('chart.html', values=values, labels=labels)
 
 
@@ -33,19 +30,17 @@ def update_data_post():
         return "error", 400
     labels = ast.literal_eval(request.form['label'])
 
-    new_lab = []
-    for _ in labels:
+    for i, ele in enumerate(labels):
         try:
-            new_ele = re.findall(r'bytearray\(b\'(#.*)\'\)', _)[0]
+            new_ele = re.findall(r'bytearray\(b\'(#.*)\'\)', ele)[0]
             print(new_ele)
-            new_lab.append(new_ele)
+            labels[i] = new_ele
         except:
-            pass
-    labels = new_lab
+            continue
 
     values = ast.literal_eval(request.form['data'])
-    print("labels received: " + str(labels))
-    print("data received: " + str(values))
+    print(f"labels received: {str(labels)}")
+    print(f"data received: {str(values)}")
     return "success", 201
 
 

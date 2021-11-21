@@ -1,3 +1,4 @@
+from socket import *
 import socket
 import traceback
 
@@ -7,7 +8,6 @@ import json
 
 
 def auth():
-    # return os.getenv('TOKEN')
     with open('keys.txt', 'r') as key_file:
         lines = key_file.read().split('\n')
         for x in lines:
@@ -32,7 +32,7 @@ def create_url(keyword, end_date, max_results=10):
 def get_response(url, headers, params, next_token=None):
     params['next_token'] = next_token  # params object received from create_url function
     response = requests.get(url, headers=headers, params=params)
-    print("Endpoint Response Code: " + str(response.status_code))
+    print(f"Endpoint Response Code: {str(response.status_code)}")
     if response.status_code != 200:
         raise Exception(response.status_code, response.text)
     return response.json()
@@ -44,9 +44,13 @@ def send_tweets_to_spark(http_resp, tcp_connection):
     # tweet is a dict
     for tweet in data:
         try:
-            tweet_text = tweet['text'].encode("utf-8") + '\n'  # pyspark can't accept stream, add '\n'
-            print(f"Tweet Text: {tweet_text}\n------------------------------------------")
-            tcp_connection.send(tweet_text + '\n')
+            # print(tweet)
+            hashtag_arr = tweet['entities']['hashtags']
+            for _ in hashtag_arr:
+                tag = _['tag']
+                tweet_text = str('#' + tag + '\n').encode("utf-8")  # pyspark can't accept stream, add '\n'
+                print(f"Hashtag: {tweet_text}\n------------------------------------------")
+                tcp_connection.send(tweet_text)
         except Exception as e:
             traceback.print_exc()
 
@@ -56,10 +60,10 @@ def get_tweet_data():
     bearer_token = auth()
     headers = {"Authorization": f"Bearer {bearer_token}"}
 
-    keyword = "xbox lang:en has:hashtags"
+    keyword = "corona lang:en has:hashtags"
     end_time = "2021-11-15T00:00:00.000Z"
 
-    url = create_url(keyword, end_time)
+    url = create_url(keyword, end_time, max_results=20)
     json_response = get_response(url[0], headers, url[1])
 
     # print(json.dumps(json_response, indent=4))
@@ -69,21 +73,24 @@ def get_tweet_data():
     return json_response
 
 
-def start():
+if __name__ == '__main__':
     TCP_IP = "127.0.0.1"
     TCP_PORT = 9009
-    conn = None
+
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     s.bind((TCP_IP, TCP_PORT))
     s.listen(1)
+
     print("Waiting for the TCP connection...")
+
     conn, addr = s.accept()
     print("Connected successfully... Starting getting tweets.")
+
     resp = get_tweet_data()
     send_tweets_to_spark(resp, conn)
-
 
 # ------------------------------------------------------------------ #
 
 # get_tweet_data()
-start()
+# start()

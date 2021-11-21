@@ -1,4 +1,6 @@
-from flask import Flask,jsonify,request
+import re
+
+from flask import Flask, jsonify, request
 from flask import render_template
 import ast
 
@@ -10,9 +12,9 @@ values = []
 
 @app.route("/")
 def chart():
-    global labels,values
-    labels = []
-    values = []
+    global labels, values
+    # labels = []
+    # values = []
     return render_template('chart.html', values=values, labels=labels)
 
 
@@ -28,14 +30,24 @@ def refresh_graph_data():
 def update_data_post():
     global labels, values
     if not request.form or 'data' not in request.form:
-        return "error",400
+        return "error", 400
     labels = ast.literal_eval(request.form['label'])
+
+    new_lab = []
+    for _ in labels:
+        try:
+            new_ele = re.findall(r'bytearray\(b\'(#.*)\'\)', _)[0]
+            print(new_ele)
+            new_lab.append(new_ele)
+        except:
+            pass
+    labels = new_lab
+
     values = ast.literal_eval(request.form['data'])
     print("labels received: " + str(labels))
     print("data received: " + str(values))
-    return "success",201
+    return "success", 201
 
 
 if __name__ == "__main__":
     app.run(host='localhost', port=5001)
-

@@ -27,25 +27,19 @@ The dataset used for this project is Twitter tweets. In, order to get the Twitte
 - To display the data using flask micro web app to display the data in a visual representation.
 
 ### Running the Application
-Lets run the application in the order:
-
-```
-1. twitter_app.py
-```
- 
-```
-2. spark_app.py
-```
-
-```
-3. app.py(Flask Application)
-``` 
+Simply run ```run.sh```.
 
 ### Visual representation
 You can access the real-time data in visual representation by accessing this URL given below.
+
+### Stopping the application
+run ```killall python3```
 
 ```
 <http://localhost:5001/ > or <http://127.0.0.1/5001>
 ```
 
 ### Final Output
+TBD
+
+<img src="/asset/footer.png"/>

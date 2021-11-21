@@ -1,18 +1,9 @@
-from pyspark import SparkConf,SparkContext
+import traceback
+
+from pyspark import SparkConf, SparkContext
 from pyspark.streaming import StreamingContext
-from pyspark.sql import Row,SQLContext
-import sys
+from pyspark.sql import Row, SQLContext
 import requests
-
-
-conf = SparkConf()
-conf.setAppName("TwitterStreamApp")
-
-sc = SparkContext(conf=conf)
-sc.setLogLevel("ERROR")
-ssc = StreamingContext(sc, 2)
-ssc.checkpoint("checkpoint_TwitterApp")
-dataStream = ssc.socketTextStream("localhost",9009)
 
 
 def aggregate_tags_count(new_values, total_sum):
@@ -40,16 +31,36 @@ def process_rdd(time, rdd):
         row_rdd = rdd.map(lambda w: Row(hashtag=w[0].encode("utf-8"), hashtag_count=w[1]))
         hashtags_df = sql_context.createDataFrame(row_rdd)
         hashtags_df.registerTempTable("hashtags")
-        hashtag_counts_df = sql_context.sql("select hashtag, hashtag_count from hashtags order by hashtag_count desc limit 10")
+        hashtag_counts_df = sql_context.sql(
+            "select hashtag, hashtag_count from hashtags order by hashtag_count desc limit 15")
         hashtag_counts_df.show()
         send_df_to_dashboard(hashtag_counts_df)
-    except:
-        e = sys.exc_info()[0]
-        print("Error: %s" % e)
+    except Exception as e:
+        traceback.print_exc()
 
-words = dataStream.flatMap(lambda line: line.split(" "))
-hashtags = words.filter(lambda w: '#' in w).map(lambda x: (x, 1))
-tags_totals = hashtags.updateStateByKey(aggregate_tags_count)
-tags_totals.foreachRDD(process_rdd)
-ssc.start()
-ssc.awaitTermination()
+
+if __name__ == '__main__':
+    conf = SparkConf()
+    conf.setAppName("SparkTwitterAnalysis")
+
+    sc = SparkContext(conf=conf)
+    sc.setLogLevel("OFF")
+
+    ssc = StreamingContext(sc, 2)
+    ssc.checkpoint("checkpoint_TwitterApp")
+
+    dataStream = ssc.socketTextStream("127.0.0.1", 9009)
+
+    # First we’ll split all the tweets into words and put them in words RDD
+    words = dataStream.flatMap(lambda line: line.split(" "))
+
+    # Then we’ll filter only hashtags from all words
+    hashtags = words.filter(lambda w: '#' in w).map(lambda x: (x, 1))
+    # and map them to pair of (hashtag, 1)
+    tags_totals = hashtags.updateStateByKey(aggregate_tags_count)
+    # and put them in hashtags RDD
+    tags_totals.foreachRDD(process_rdd)
+    ssc.start()
+    ssc.awaitTermination()
+
+# start()

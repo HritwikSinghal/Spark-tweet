@@ -1,8 +1,8 @@
 # <b>Spark tweet analysis<br></b>
 
-This is Our Project for the Cloud Computing Course.
-This project will take user input of keywords and pages and fetch the tweets based on those keywords 
-from twitter, filter hashtags from those tweets and give those hashtags to spark for processing.
+This is Our Project for the Cloud Computing Course. This project will take user input of keywords and pages and fetch
+the tweets based on those keywords from twitter, filter hashtags from those tweets and give those hashtags to spark for
+processing.
 
 ### Objective of the project:
 
@@ -36,7 +36,13 @@ application' and, finally, generate the access token for the project.<br>
 
 ### Running the Application
 
-#### 1. automatic run
+First steps first...
+
+- ```git clone https://github.com/HritwikSinghal/Spark-tweet.git```
+- ```cd Spark-tweet```
+- ```pip install -r ./requirements.txt```
+
+#### 1. Automatic run
 
 Simply run ```run.sh```. if you want the defaults. The defaults are :
 

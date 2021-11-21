@@ -21,7 +21,14 @@ representing the data in a real-time dashboard.
 
 The dataset used for this project is Twitter tweets. In, order to get the Twitter tweets we need Twitter API, for that
 first, we need to register for the Twitter Developer account. After the registration click on the 'create an
-application' and, finally, generate the access token for the project.<br>
+application' and, finally, generate the Bearer Token for the project.<br>
+
+Make a new file ```keys.txt``` and in it put the bearer token in below format
+```
+token:<your_token_here>
+```
+
+make sure there are no spaces between token & : and : & <your_token>  
 
 ### Methodology used in developing project:
 

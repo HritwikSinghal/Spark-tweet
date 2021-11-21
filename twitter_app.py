@@ -11,9 +11,7 @@ def auth():
     # return os.getenv('TOKEN')
     with open('keys.txt', 'r') as key_file:
         lines = key_file.read().split('\n')
-        print(lines)
         for x in lines:
-            print(x)
             x = x.strip()
             if x.startswith("token:"):
                 return x[6:]
@@ -46,6 +44,8 @@ def get_response(url, headers, params, next_token=None):
 
 
 def send_tweets_to_spark(http_resp, tcp_connection):
+
+
     for line in http_resp.iter_lines():
         try:
             full_tweet = json.loads(line)
@@ -61,8 +61,6 @@ def send_tweets_to_spark(http_resp, tcp_connection):
 def get_tweet_data():
     # Inputs for the request
     bearer_token = auth()
-    input(bearer_token)
-
     headers = {"Authorization": f"Bearer {bearer_token}"}
     keyword = "xbox lang:en has:hashtags"
     end_time = "2021-11-15T00:00:00.000Z"

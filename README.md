@@ -1,6 +1,8 @@
 # <b>Spark tweet analysis<br></b>
 
 This is Our Project for the Cloud Computing Course.
+This project will take user input of keywords and pages and fetch the tweets based on those keywords 
+from twitter, filter hashtags from those tweets and give those hashtags to spark for processing.
 
 ### Objective of the project:
 
@@ -61,7 +63,10 @@ Run the Programs in the order. **NOTE: Every step should be run in new terminal*
 
 3. ```python3 ./twitter_app.py -p _<no_of_pages>_ -k _<"keywords">_```
 
-Note that keywords should be in quotes, like ```"corona bitcoin gaming Android"``` 
+Replace ```_<"keywords">_``` with the keywords you want to search
+(Note that keywords should be in quotes, like ```"corona bitcoin gaming Android"```)
+
+and ```<no_of_pages>``` with the number of pages you want for each keyword from twitter.
 
 ### Visual representation
 

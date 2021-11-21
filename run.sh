@@ -7,4 +7,4 @@ python3 ./spark_app.py &
 
 python3 ./app.py &
 
-python3 ./twitter_app.py -p 2 -k corona bitcoin gaming Android &
+python3 ./twitter_app.py -p 2 -k "corona bitcoin gaming Android" &

@@ -40,7 +40,7 @@ def get_response(url, headers, params):
     return response.json()
 
 
-def get_tweet_data(next_token=None, query='corona'):
+def get_tweet_data(next_token=None, query='corona', max_results=20):
     # Inputs for the request
     bearer_token = auth()
     headers = {"Authorization": f"Bearer {bearer_token}"}
@@ -79,16 +79,24 @@ def input_term():
     parser = argparse.ArgumentParser(description='Spark Tweet analyzer')
     parser.add_argument('-p', '--pages', type=int, help="No of pages to query", required=True)
     parser.add_argument('-k', '--keywords', type=str, help="List of keywords to query", required=True)
+    parser.add_argument('-m', '--max_results', type=int, help="max results", required=False)
+    parser.add_argument('-s', '--sleep_timer', type=int, help="sleep timer", required=False)
+
     # Parse and print the results
     args = parser.parse_args()
 
-    return args.pages, args.keywords
+    return args.pages, args.keywords, args.max_results, args.sleep_timer
 
 
 if __name__ == '__main__':
     # no_of_pages = 2
     # queries = ['corona', 'bitcoin', 'gaming', 'Android']
-    no_of_pages, queries = input_term()
+    no_of_pages, queries, max_results, sleep_timer = input_term()
+    if max_results is None:
+        max_results = 20
+    if sleep_timer is None:
+        sleep_timer = 5
+
     queries = str(queries).split(" ")
 
     TCP_IP = "127.0.0.1"
@@ -107,7 +115,7 @@ if __name__ == '__main__':
     for query in queries:
         for _ in range(no_of_pages):
             print(f"\n\n\n\n\nProcessing Page {_} for keyword {query}\n\n\n\n\n")
-            resp = get_tweet_data(next_token=next_token, query=query)
+            resp = get_tweet_data(next_token=next_token, query=query, max_results=max_results)
             next_token = resp['meta']['next_token']
             send_tweets_to_spark(http_resp=resp, tcp_connection=conn)
-            time.sleep(5)
+            time.sleep(sleep_timer)

@@ -104,8 +104,8 @@ if __name__ == '__main__':
     print("Connected successfully... Starting getting tweets.")
 
     next_token = None
-    for _ in range(no_of_pages):
-        for query in queries:
+    for query in queries:
+        for _ in range(no_of_pages):
             print(f"\n\n\n\n\nProcessing Page {_} for keyword {query}\n\n\n\n\n")
             resp = get_tweet_data(next_token=next_token, query=query)
             next_token = resp['meta']['next_token']

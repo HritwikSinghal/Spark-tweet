@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for ('static', filename='css/index.css')}}">
+    <!-- <script type="module" src="index.js"></script> -->
+   
+</head>
+<body>
+    <div id="chart" class="box">
+        <div id="responsive-chart"></div>
+    </div>
+    <script>
+
+var dataValues = []
+
+{% for item in dataValues %}
+      dataValues.push({{item}})
+{% endfor %}
+
+var categoryValues = []
+{% for item in categoryValues %}
+      categoryValues.push('{{item}}')
+{% endfor %}
+
+var options = {
+    title: {
+      text: "Trending Hashtags",
+      align: "left",
+      style: {
+        fontSize: "20px"
+      }
+    },
+    chart: {
+      width: "100%",
+      height: 500,
+      type: "bar",
+      foreColor: "#fff",
+    },
+    fill: {
+      type: "gradient",
+      gradient: {
+        gradientToColors: ["#F55555", "#6078ea", "#6094ea"],
+        shade: "dark",
+        type: "horizontal",
+        shadeIntensity: 0.5,
+        inverseColors: true,
+        opacityFrom: 1,
+        stops: [0, 100]
+      }
+    },
+    tooltip: {
+      theme: "dark",
+    },
+    grid: {
+      borderColor: "#40475D"
+    },
+    colors: ["#FCCF31", "#17ead9", "#f02fc2"],
+    plotOptions: {
+      bar: {
+        horizontal: true,	
+      }
+    },
+    dataLabels: {
+      enabled: true,
+    },
+    stroke: {
+      width: 0,
+    },
+    series: [
+      {
+        name: 'Count',
+        data: dataValues
+      },
+    ],
+    xaxis: {
+      title: {
+        text: 'Count',
+        style: {
+          fontSize: "17px"
+        }
+      },
+      type: 'category',
+      categories: categoryValues,
+      axisBorder: {
+        color: "#333"
+      },
+    },
+    yaxis: {
+      title: {
+        text: 'Hashtag',
+        style: {
+          fontSize: "17px"
+        }
+      },
+      labels: {
+        offsetX: 10
+      }
+    },
+    legend: {
+      position: "right",
+      verticalAlign: "top",
+      containerMargin: {
+        left: 35,
+        right: 60
+      }
+    },
+    responsive: [
+      {
+        breakpoint: 1000,
+        options: {
+          fill: {
+            type: "gradient",
+            gradient: {
+              shade: "dark",
+              type: "vertical",
+              shadeIntensity: 0.5,
+              inverseColors: false,
+              opacityFrom: 1,
+              stops: [0, 100]
+            }
+          },
+          plotOptions: {
+            bar: {
+              horizontal: false
+            }
+          },
+          legend: {
+            position: "bottom"
+          },
+          xaxis:{
+            title: {
+            text: 'Hashtag'
+            },
+            axisBorder: {
+              color: "#333"
+            }
+          },
+          yaxis:{
+            title: {
+              text: 'Count',
+              style: {
+                fontSize: "17px"
+              }
+            }
+          }
+        }
+      }
+    ]
+  };
+  
+  var chart = new ApexCharts(
+    document.querySelector("#responsive-chart"),
+    options
+  );
+
+  chart.render();
+
+  setInterval(()=>{
+    $.getJSON('/refreshData',{},(data)=>{
+      options.series[0].data=data.dataValues;
+      options.xaxis.categories=data.categoryValues;
+    })
+    chart.updateOptions(options,false,true,true)
+
+  },200000);
+  
+   
+    </script>
+</body>
+</html>

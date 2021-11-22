@@ -46,7 +46,8 @@ make sure there are no spaces between token & : and : & <your_token>
 First steps first...
 
 - Java version should be compatible with pyspark. Current version of pyspark is 3.2.0 and only java
-version 11 is compatible.
+version 11 is compatible. You can check java version
+by running command ```java --version```
 - ```git clone https://github.com/HritwikSinghal/Spark-tweet.git```
 - ```cd Spark-tweet```
 - ```pip install -r ./requirements.txt```

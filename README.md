@@ -12,8 +12,8 @@ representing the data in a real-time dashboard.
 
 ### Limitations
 
-- 450 queries per 15 minutes (enforced by twitter APIv2)
-- 500K queries per month(enforced by twitter APIv2)
+- 450 queries per 15 minutes (enforced by twitter APIv2) [link](https://developer.twitter.com/en/docs/twitter-api/tweets/search/api-reference/get-tweets-search-recent)
+- 500K queries per month(enforced by twitter APIv2) [link](https://developer.twitter.com/en/docs/twitter-api/rate-limits)
 - We cannot get general tweets from Twitter. We have to get tweets based on some Query string (enforced by twitter
   APIv2)
 
@@ -56,10 +56,10 @@ by running command ```java --version```
 
 Simply run ```run.sh```. if you want the defaults. The defaults are :
 
-- keywords = "corona bitcoin gaming Android"
+- keywords = "corona bitcoin gaming Android climate cricket"
 - pages = 2 (per keyword)
 
-Note that this will open the browser window and will kill the app after 2 minutes.
+Note that this will open the browser window and will kill the app after 4 minutes.
 (this will not happen if you use manual run, although you can modify ```run.sh``` to change this behaviour)
 
 #### 2. Manual run

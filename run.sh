@@ -5,9 +5,9 @@ python3 ./spark_app.py &
 
 python3 ./app.py &
 
-python3 ./twitter_app.py -p 7 -k "corona bitcoin gaming Android" -m 50 -s 1 &
+python3 ./twitter_app.py -p 15 -k "corona bitcoin gaming Android climate cricket" -m 50 -s 1 &
 python -m webbrowser http://localhost:5001
 
 # kill after 2 mins
-sleep 120
+sleep 240
 killall python3

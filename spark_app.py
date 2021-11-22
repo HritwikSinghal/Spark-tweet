@@ -32,7 +32,7 @@ def process_rdd(time, rdd):
         hashtags_df = sql_context.createDataFrame(row_rdd)
         hashtags_df.registerTempTable("hashtags")
         hashtag_counts_df = sql_context.sql(
-            "select hashtag, hashtag_count from hashtags order by hashtag_count desc limit 15")
+            "select hashtag, hashtag_count from hashtags order by hashtag_count desc limit 25")
         hashtag_counts_df.show()
         send_df_to_dashboard(hashtag_counts_df)
     except Exception as e:

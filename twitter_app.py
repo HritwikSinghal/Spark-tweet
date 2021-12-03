@@ -4,6 +4,8 @@ import socket
 import traceback
 import argparse
 import os
+from datetime import date
+from datetime import timedelta
 
 import requests
 
@@ -46,7 +48,10 @@ def get_tweet_data(next_token=None, query='corona', max_results=20):
     headers = {"Authorization": f"Bearer {bearer_token}"}
 
     keyword = f"{query} lang:en has:hashtags"
-    end_time = "2021-11-17T00:00:00.000Z"
+
+    today = date.today()
+    yesterday = str(today - timedelta(days=6))
+    end_time = "######T00:00:00.000Z".replace("######", yesterday)
 
     url: tuple = create_url(keyword, end_time, next_token=next_token, max_results=20)
     json_response = get_response(url=url[0], headers=headers, params=url[1])

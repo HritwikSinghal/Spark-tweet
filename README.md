@@ -109,6 +109,6 @@ run ```killall python3```  in new terminal
 
 ### Final Output
 
-![Demo](asset/demo.mp4)
+![Demo](asset/output.mp4)
 
 <img src="/asset/footer.png"/>

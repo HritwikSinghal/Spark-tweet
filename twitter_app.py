@@ -1,10 +1,10 @@
 import argparse
 import json
+import socket
 import time
 import traceback
 from datetime import date
 from datetime import timedelta
-from socket import *
 
 import requests
 
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     TCP_PORT = 9009
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind((TCP_IP, TCP_PORT))
     s.listen(1)
     print("Waiting for the TCP connection...")

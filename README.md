@@ -1,8 +1,11 @@
 # <b><center>Spark tweet analysis<br></b></center>
 
-This is Our Project for the Cloud Computing Course. This project will take user input of keywords and pages and fetch
-the tweets based on those keywords from Twitter, filter hashtags from those tweets and give those hashtags to spark for
-processing. After that it will launch a flask server on localhost:5001 to view the data in visual dashboard.
+This is Our Project for the Cloud Computing Course. 
+This project will take user input of “keywords” and “pages” 
+and fetch recent tweets based on those keywords using Twitter API v2, 
+filter hashtags from those tweets and give those hashtags to spark streaming for processing.
+After that it will launch a flask web server on localhost:5001 to view the data
+in a visual dashboard powered by ApexCharts
 
 ### Introduction
 

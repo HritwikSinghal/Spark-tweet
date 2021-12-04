@@ -4,11 +4,12 @@ This is Our Project for the Cloud Computing Course. This project will take user 
 the tweets based on those keywords from Twitter, filter hashtags from those tweets and give those hashtags to spark for
 processing. After that it will launch a flask server on localhost:5001 to view the data in visual dashboard.
 
-### Objective
+### Introduction
 
-To create a program using Apache Spark, an online streaming Real-Time Analytics Platform, to process the tweets and
-identifying the trending hashtags from Twitter based on a certain keyword and, finally, retrieve top hashtags by
-representing the data in a real-time dashboard.
+We are Using Apache Spark streaming, Real-Time Analytics engine, 
+to process tweets retrieved from Twitter API and identify the trending hashtags 
+from them based on a certain keywords and, finally, 
+represent the data in a real-time dashboard using flask web framework.
 
 ### Limitations
 

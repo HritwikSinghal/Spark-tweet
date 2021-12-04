@@ -31,13 +31,13 @@ def update_data_post():
         return "error", 400
     categoryValues = ast.literal_eval(request.form['label'])
 
-    for i, ele in enumerate(categoryValues):
-        try:
-            new_ele = re.findall(r'bytearray\(b\'(#.*)\'\)', ele)[0]
-            print(new_ele)
-            categoryValues[i] = new_ele
-        except:
-            continue
+    # for i, ele in enumerate(categoryValues):
+    #     try:
+    #         new_ele = re.findall(r'bytearray\(b\'(#.*)\'\)', ele)[0]
+    #         print(new_ele)
+    #         categoryValues[i] = new_ele
+    #     except:
+    #         continue
 
     dataValues = ast.literal_eval(request.form['data'])
     print(f"labels received: {str(categoryValues)}")

@@ -68,6 +68,7 @@ def send_tweets_to_spark(http_resp, tcp_connection):
             hashtag_arr = tweet['entities']['hashtags']
             for _ in hashtag_arr:
                 tag = _['tag']
+                # sending only hashtag
                 tweet_text = str('#' + tag + '\n').encode("utf-8")  # pyspark can't accept stream, add '\n'
                 print(f"Hashtag: {tweet_text}\n------------------------------------------")
                 tcp_connection.send(tweet_text)

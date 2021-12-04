@@ -1,9 +1,12 @@
 import os
+import re
 import traceback
 
 import requests
 from pyspark import SparkConf, SparkContext
-from pyspark.sql import Row, SQLContext
+from pyspark.sql import Row, SQLContext, SparkSession
+from pyspark.sql.functions import explode
+from pyspark.sql.functions import split
 from pyspark.streaming import StreamingContext
 
 os.environ["PYSPARK_PYTHON"] = "python3"
@@ -43,21 +46,15 @@ def process_rdd(time, rdd):
         traceback.print_exc()
 
 
-if __name__ == '__main__':
-    conf = SparkConf()
-    conf.setAppName("SparkTwitterAnalysis")
-
+def old():
+    conf = SparkConf().setAppName("SparkTwitterAnalysis")
     sc = SparkContext(conf=conf)
     sc.setLogLevel("OFF")
-
     ssc = StreamingContext(sc, 2)
     ssc.checkpoint("checkpoint_TwitterApp")
-
     dataStream = ssc.socketTextStream("127.0.0.1", 9009)
-
     # First we’ll split all the tweets into words and put them in words RDD
     words = dataStream.flatMap(lambda line: line.split(" "))
-
     # Then we’ll filter only hashtags from all words
     hashtags = words.filter(lambda w: '#' in w).map(lambda x: (x, 1))
     # and map them to pair of (hashtag, 1)
@@ -66,3 +63,75 @@ if __name__ == '__main__':
     tags_totals.foreachRDD(process_rdd)
     ssc.start()
     ssc.awaitTermination()
+
+
+tags = {}
+
+
+def send_data():
+    top_tags = [_ for _ in tags]
+    tags_count = [tags[_] for _ in tags]
+    url = 'http://localhost:5001/updateData'
+    request_data = {'label': str(top_tags), 'data': str(tags_count)}
+    response = requests.post(url, data=request_data)
+
+
+def process_row(row, temp):
+    global tags
+    print(row)          # Row(hashtag='#BSCGems', count=2)
+    # x = re.findall(r'hashtag=\'(.*)\', count=(.*)', str(row))[0]
+    # hashtag: str = x[0]
+    # count = x[1]
+    # tags[hashtag] = count
+    # send_data()
+
+
+def new():
+    # create a local SparkSession, the starting point of all functionalities related to Spark
+    spark = SparkSession.builder.appName("SparkTwitterAnalysis").getOrCreate()
+
+    # This 'lines' DataFrame represents an unbounded table containing the streaming text data.
+    # This table contains one column of strings named “value”,
+    # and each line in the streaming text data becomes a row in the table
+
+    # create a streaming DataFrame that represents text data received from a server listening on localhost:9009
+    lines = spark.readStream.format("socket").option("host", "127.0.0.1").option("port", 9009).load()
+    # print(type(lines))        # class 'pyspark.sql.dataframe.DataFrame'
+    lines.printSchema()
+
+    # Next, we have used two built-in SQL functions - split and explode,
+    # to split each line into multiple rows with a word each.
+    # In addition, we use the function alias to name the new column as “word”.
+
+    # Split the lines into words
+    words = lines.select(explode(split(lines.value, " ")).alias("hashtag"))
+
+    # Finally, we have defined the wordCounts DataFrame by grouping by the unique values in the Dataset
+    # and counting them. Note that this is a streaming DataFrame which represents the running word counts of the stream.
+
+    # Generate running word count
+    wordCounts = words.groupBy("hashtag").count()
+    # print(type(wordCounts))             # <class 'pyspark.sql.dataframe.DataFrame'>
+
+    # We have now set up the query on the streaming data. All that is left is to actually start receiving data
+    # and computing the counts. To do this, we set it up to print the complete set of counts
+    # (specified by outputMode("complete")) to the console every time they are updated.
+    # And then start the streaming computation using start().
+
+    # Start running the query that prints the running counts to the console
+    # query = wordCounts.writeStream.outputMode("complete").format("json",).start()
+    # print(type(query))          # class 'pyspark.sql.streaming.StreamingQuery'
+
+    # query = wordCounts.writeStream.foreachBatch(process_row).outputMode('Update').start()
+
+    query = wordCounts \
+        .option("checkpointLocation", "/home/hritwik/Videos") \
+        .toTable("myTable")
+
+    query.awaitTermination()
+
+
+if __name__ == '__main__':
+    new()
+    # old()
+    exit(0)

@@ -1,15 +1,12 @@
-import time
-from socket import *
-import socket
-import traceback
 import argparse
-import os
+import json
+import time
+import traceback
 from datetime import date
 from datetime import timedelta
+from socket import *
 
 import requests
-
-import json
 
 
 def auth():
@@ -46,12 +43,10 @@ def get_tweet_data(next_token=None, query='corona', max_results=20):
     # Inputs for the request
     bearer_token = auth()
     headers = {"Authorization": f"Bearer {bearer_token}"}
-
     keyword = f"{query} lang:en has:hashtags"
 
-    today = date.today()
-    yesterday = str(today - timedelta(days=6))
-    end_time = "######T00:00:00.000Z".replace("######", yesterday)
+    end_date = str(date.today() - timedelta(days=6))
+    end_time = f"{end_date}T00:00:00.000Z"
 
     url: tuple = create_url(keyword, end_time, next_token=next_token, max_results=20)
     json_response = get_response(url=url[0], headers=headers, params=url[1])

@@ -1,9 +1,9 @@
 import traceback
 
-from pyspark import SparkConf, SparkContext
-from pyspark.streaming import StreamingContext
-from pyspark.sql import Row, SQLContext
 import requests
+from pyspark import SparkConf, SparkContext
+from pyspark.sql import Row, SQLContext
+from pyspark.streaming import StreamingContext
 
 
 def aggregate_tags_count(new_values, total_sum):

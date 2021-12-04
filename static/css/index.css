@@ -1,22 +1,22 @@
 * {
     font-family: 'Poppins', sans-serif;
-  }
+}
 
-  body {
+body {
     background: #1B213B;
     color: #777;
     font-family: Montserrat, Arial, sans-serif;
-  }
+}
 
-  .box {
+.box {
     background-color: #262D47;
 
-    padding: 25px 25px; 
-    border-radius: 4px; 
-  }
-  
-  #chart {
+    padding: 25px 25px;
+    border-radius: 4px;
+}
+
+#chart {
     /* max-width: 760px; */
     margin: 5% 5% 5% 5%;
     opacity: 0.9;
-  }
+}

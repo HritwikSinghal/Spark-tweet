@@ -1,18 +1,18 @@
-from os import truncate
+import ast
 import re
 
 from flask import Flask, jsonify, request
 from flask import render_template
-import ast
 
 app = Flask(__name__)
 
 dataValues = []
 categoryValues = []
 
+
 @app.route("/")
 def home():
-    return render_template('index.html',dataValues=dataValues,categoryValues=categoryValues)
+    return render_template('index.html', dataValues=dataValues, categoryValues=categoryValues)
 
 
 @app.route('/refreshData')
@@ -46,4 +46,4 @@ def update_data_post():
 
 
 if __name__ == "__main__":
-    app.run(host='localhost', port=5001 , debug=True)
+    app.run(host='localhost', port=5001, debug=True)

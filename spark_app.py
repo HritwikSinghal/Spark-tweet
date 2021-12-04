@@ -1,9 +1,13 @@
+import os
 import traceback
 
 import requests
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import Row, SQLContext
 from pyspark.streaming import StreamingContext
+
+os.environ["PYSPARK_PYTHON"] = "python3"
+os.environ["SPARK_LOCAL_HOSTNAME"] = "localhost"
 
 
 def aggregate_tags_count(new_values, total_sum):

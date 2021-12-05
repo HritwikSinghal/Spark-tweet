@@ -1,4 +1,4 @@
-# <b><center>Spark tweet analysis<br></b></center>
+# <b><center>Real Time Analysis of Twitter hashtags using Apache Spark Structured Streaming<br></b></center>
 
 This is Our Project for the Cloud Computing Course. 
 This project will fetch recent tweets based on “keywords” and “pages”, 

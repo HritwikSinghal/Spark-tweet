@@ -1,10 +1,19 @@
 # <b><center>Real Time Analysis of Twitter hashtags using Apache Spark Structured Streaming<br></b></center>
+<p align="center">
+  <img src="https://img.shields.io/badge/Library-Flask-red.svg?style=flat-square">
+  <img src="https://img.shields.io/badge/Tool-ApacheSpark-yellow.svg?style=flat-square">
+  <img src="https://img.shields.io/badge/Language-Python-purple.svg?style=flat-square">
+</p>
+
+---
 
 This is Our Project for the Cloud Computing Course. 
 This project will fetch recent tweets based on “keywords” and “pages”, 
 using Twitter API v2, filter hashtags from those tweets and give those hashtags 
 to spark streaming for processing. After that it will launch a flask web server 
 on localhost:5001 to view the data in a visual dashboard powered by ApexCharts.
+
+--- 
 
 ### Introduction
 
@@ -83,11 +92,12 @@ Replace ```_<"keywords">_``` with the keywords you want to search
 (Note that keywords should be in quotes, like ```"corona bitcoin gaming Android"```)
 and ```<no_of_pages>``` with the number of pages you want for each keyword from twitter.
 
+
 3. ```
-   export PYSPARK_PYTHON=python3
-   export SPARK_LOCAL_HOSTNAME=localhost
-   python3 ./spark_app.py
- ```
+     export PYSPARK_PYTHON=python3
+     export SPARK_LOCAL_HOSTNAME=localhost
+     python3 ./spark_app.py
+   ```
 
 ### Visual representation
 
@@ -107,8 +117,12 @@ http://127.0.0.1/5001
 
 run ```killall python3```  in new terminal
 
+---
+
 ### Final Output
 
 ![Demo](asset/demo.gif)
+
+---
 
 <img src="/asset/footer.png"/>

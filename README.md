@@ -3,9 +3,10 @@
 </h1>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Library-Flask-red.svg?style=flat-square">
-  <img src="https://img.shields.io/badge/Tool-ApacheSpark-yellow.svg?style=flat-square">
-  <img src="https://img.shields.io/badge/Language-Python-purple.svg?style=flat-square">
+<img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white">
+<img src="https://img.shields.io/badge/Apache_Spark-FFFFFF?style=for-the-badge&logo=apachespark&logoColor=#E35A16">
+<img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white">
+<img src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black">
 </p>
 
 ---

@@ -77,20 +77,17 @@ Run the Programs in the order. **NOTE: Every step should be run in new terminal*
 1. Flask Application ```python3 ./app.py```
 
 
-2.
+2. ```python3 ./twitter_app.py -p _<no_of_pages>_ -k _<"keywords">_```
 
- ```
+Replace ```_<"keywords">_``` with the keywords you want to search
+(Note that keywords should be in quotes, like ```"corona bitcoin gaming Android"```)
+and ```<no_of_pages>``` with the number of pages you want for each keyword from twitter.
+
+3. ```
    export PYSPARK_PYTHON=python3
    export SPARK_LOCAL_HOSTNAME=localhost
    python3 ./spark_app.py
  ```
-
-3. ```python3 ./twitter_app.py -p _<no_of_pages>_ -k _<"keywords">_```
-
-Replace ```_<"keywords">_``` with the keywords you want to search
-(Note that keywords should be in quotes, like ```"corona bitcoin gaming Android"```)
-
-and ```<no_of_pages>``` with the number of pages you want for each keyword from twitter.
 
 ### Visual representation
 

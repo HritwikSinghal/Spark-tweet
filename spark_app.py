@@ -51,24 +51,22 @@ def process_rdd(time, rdd):
 
 def start():
     # we import StreamingContext, which is the main entry point for all streaming functionality
-    # Create a local StreamingContext with 8 working thread and batch interval of 1 second
+    # Create a local StreamingContext with 8 working thread and batch interval of 3 second
     sc = SparkContext("local[8]", "SparkTwitterAnalysis")
     ssc = StreamingContext(sc, 3)
     sc.setLogLevel("OFF")
 
-    # Using above context, we can create a DataStream that represents streaming data from a TCP source
-    # Create a DataStream that will connect to hostname:port, like localhost:9999
+    # Using above context, we can create a DataStream that will connect to hostname:port, like localhost:9009
     lines = ssc.socketTextStream("localhost", 9009)
 
     # This 'lines' DStream represents the stream of data that will be received from the data server.
     # Each record in this DStream is a line of text. Next, we want to split the lines by space into words
-    # Split each line into words
     words = lines.flatMap(lambda line: line.split(" "))
 
     # flatMap is a one-to-many DStream operation that creates a new DStream by generating multiple new records
-    # from each record in the source DStream. In this case, each line will be split into multiple words and the
-    # stream of words is represented as the words DStream. Next, we want to count these words
-
+    # from each record in the source DStream.
+    # In this case, each line will be split into multiple words and the stream of words is saved as the 'words' DStream.
+    # Next, we want to count these words
     # Count each word in each batch
     pairs = words.map(lambda word: (word, 1))
 

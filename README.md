@@ -1,4 +1,7 @@
-# <b><center>Real Time Analysis of Twitter hashtags using Apache Spark Structured Streaming<br></b></center>
+<h1 align="center">
+  <b><center>Real Time Analysis of Twitter hashtags using Apache Spark Structured Streaming<br></b></center>
+</h1>
+
 <p align="center">
   <img src="https://img.shields.io/badge/Library-Flask-red.svg?style=flat-square">
   <img src="https://img.shields.io/badge/Tool-ApacheSpark-yellow.svg?style=flat-square">

@@ -60,9 +60,10 @@ def get_tweet_data(next_token=None, query='corona', max_results=20):
     return json_response
 
 
-def get_hashtag(tag_info: dict):
+def get_tag(tag_info: dict):
     tag = str(tag_info['tag']).strip()
     hashtag = str('#' + tag + '\n')
+    print(f"Hashtag: {hashtag.strip()}")
     return hashtag
 
 
@@ -75,16 +76,15 @@ def send_tweets_to_spark(http_resp, tcp_connection):
             hashtag_list = tweet['entities']['hashtags']
             for tag_info in hashtag_list:
                 # sending only hashtag
-                hash_tag = get_hashtag(tag_info)
-                print(f"Hashtag: {hash_tag}")
-                tcp_connection.send(hash_tag.encode("utf-8"))
+                hashtag = get_tag(tag_info)
+                tcp_connection.send(hashtag.encode("utf-8"))
         except KeyError:
             print("No hashtag found in current tweet, moving on...")
             continue
         except BrokenPipeError:
             exit("Pipe Broken, Exiting...")
         except KeyboardInterrupt:
-            exit("Keyboard Interrupt, Exiting..")
+            exit("Keyboard Interrupt, Exiting...")
         except Exception as e:
             traceback.print_exc()
 
@@ -128,8 +128,11 @@ if __name__ == '__main__':
     next_token = None
     for query in queries:
         for _ in range(no_of_pages):
-            print(f"\n\n\t\tProcessing Page {_} for keyword {query}\n\n")
-            resp = get_tweet_data(next_token=next_token, query=query, max_results=max_results)
-            next_token = resp['meta']['next_token']
-            send_tweets_to_spark(http_resp=resp, tcp_connection=conn)
-            time.sleep(sleep_timer)
+            try:
+                print(f"\n\n\t\tProcessing Page {_} for keyword {query}\n\n")
+                resp = get_tweet_data(next_token=next_token, query=query, max_results=max_results)
+                next_token = resp['meta']['next_token']
+                send_tweets_to_spark(http_resp=resp, tcp_connection=conn)
+                time.sleep(sleep_timer)
+            except KeyboardInterrupt:
+                exit("Keyboard Interrupt, Exiting..")

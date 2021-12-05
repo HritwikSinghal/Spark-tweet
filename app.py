@@ -4,6 +4,11 @@ from collections import OrderedDict
 from flask import Flask, jsonify, request
 from flask import render_template
 
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
+
+
 app = Flask(__name__)
 
 dataValues = []

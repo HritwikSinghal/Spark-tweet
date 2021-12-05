@@ -58,20 +58,30 @@ def get_tweet_data(next_token=None, query='corona', max_results=20):
     return json_response
 
 
+def get_hashtag(tag_info):
+    tag = str(tag_info['tag']).strip()
+    # sending only hashtag
+    hashtag = str('#' + tag + '\n')
+    return hashtag
+
+
 def send_tweets_to_spark(http_resp, tcp_connection):
     data: list = http_resp["data"]
 
     # tweet is a dict
     for tweet in data:
         try:
-            # print(tweet)
-            hashtag_arr = tweet['entities']['hashtags']
-            for _ in hashtag_arr:
-                tag = _['tag']
-                # sending only hashtag
-                tweet_text = str('#' + tag + '\n').encode("utf-8")  # pyspark can't accept stream, add '\n'
-                print(f"Hashtag: {tweet_text}\n------------------------------------------")
-                tcp_connection.send(tweet_text)
+            hashtag_list = tweet['entities']['hashtags']
+            for tag_info in hashtag_list:
+                tag = get_hashtag(tag_info)
+                print(f"Hashtag: {tag.strip()}")
+                tcp_connection.send(tag.encode("utf-8"))
+        except KeyError:
+            continue
+        except BrokenPipeError:
+            exit("Pipe Broken, Exiting...")
+        except KeyboardInterrupt:
+            exit("Keyboard Interrupt, Exiting..")
         except Exception as e:
             traceback.print_exc()
 
@@ -115,7 +125,7 @@ if __name__ == '__main__':
     next_token = None
     for query in queries:
         for _ in range(no_of_pages):
-            print(f"\n\n\n\n\nProcessing Page {_} for keyword {query}\n\n\n\n\n")
+            print(f"\n\n\t\tProcessing Page {_} for keyword {query}\n\n")
             resp = get_tweet_data(next_token=next_token, query=query, max_results=max_results)
             next_token = resp['meta']['next_token']
             send_tweets_to_spark(http_resp=resp, tcp_connection=conn)

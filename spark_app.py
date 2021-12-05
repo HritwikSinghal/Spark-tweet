@@ -23,6 +23,12 @@ def get_sql_context_instance(spark_context):
 def send_df_to_dashboard(df):
     top_tags = [str(t.hashtag) for t in df.select("hashtag").collect()]
     tags_count = [p.hashtag_count for p in df.select("hashtag_count").collect()]
+
+    print("\n\nDAta to be sent ------------------------------------------------------------------\n")
+    print(top_tags)
+    print(tags_count)
+    print("\n--------------------------------------------------------------\n\n")
+
     url = 'http://localhost:5001/updateData'
     request_data = {'label': str(top_tags), 'data': str(tags_count)}
     response = requests.post(url, data=request_data)
@@ -43,13 +49,53 @@ def process_rdd(time, rdd):
         traceback.print_exc()
 
 
-if __name__ == '__main__':
-    conf = SparkConf()
-    conf.setAppName("SparkTwitterAnalysis")
-
-    sc = SparkContext(conf=conf)
+def start():
+    # we import StreamingContext, which is the main entry point for all streaming functionality
+    # Create a local StreamingContext with 8 working thread and batch interval of 1 second
+    sc = SparkContext("local[8]", "SparkTwitterAnalysis")
+    ssc = StreamingContext(sc, 3)
     sc.setLogLevel("OFF")
 
+    # Using above context, we can create a DataStream that represents streaming data from a TCP source
+    # Create a DataStream that will connect to hostname:port, like localhost:9999
+    lines = ssc.socketTextStream("localhost", 9009)
+
+    # This 'lines' DStream represents the stream of data that will be received from the data server.
+    # Each record in this DStream is a line of text. Next, we want to split the lines by space into words
+    # Split each line into words
+    words = lines.flatMap(lambda line: line.split(" "))
+
+    # flatMap is a one-to-many DStream operation that creates a new DStream by generating multiple new records
+    # from each record in the source DStream. In this case, each line will be split into multiple words and the
+    # stream of words is represented as the words DStream. Next, we want to count these words
+
+    # Count each word in each batch
+    pairs = words.map(lambda word: (word, 1))
+
+    # The words DStream is further mapped (one-to-one transformation) to a DStream of (word, 1) pairs,
+    # which is then reduced to get the frequency of words in each batch of data.
+    wordCounts = pairs.reduceByKey(lambda x, y: x + y)
+
+    # Finally, wordCounts.pprint() will print a few of the counts generated every second.
+    # Print the first ten elements of each RDD generated in this DStream to the console
+    wordCounts.pprint()
+
+    # Note that when these lines are executed, Spark Streaming only sets up the computation
+    # it will perform when it is started, and no real processing has started yet.
+    # To start the processing after all the transformations have been setup, we finally call
+
+    ssc.start()  # Start the computation
+    ssc.awaitTermination()  # Wait for the computation to terminate
+
+
+if __name__ == '__main__':
+    start()
+    exit(0)
+
+    # create a spark context
+    conf = SparkConf().setAppName('SparkTwitterAnalysis')
+    sc = SparkContext(conf=conf)
+    sc.setLogLevel("OFF")
     ssc = StreamingContext(sc, 2)
     ssc.checkpoint("checkpoint_TwitterApp")
 

@@ -1,5 +1,4 @@
 import argparse
-import json
 import socket
 import time
 import traceback
@@ -9,7 +8,9 @@ from datetime import timedelta
 import requests
 
 
-def auth():
+def auth() -> str:
+    # function to get Bearer token from file name 'keys.txt'
+
     with open('keys.txt', 'r') as key_file:
         lines = key_file.read().split('\n')
         for x in lines:
@@ -51,16 +52,16 @@ def get_tweet_data(next_token=None, query='corona', max_results=20):
     url: tuple = create_url(keyword, end_time, next_token=next_token, max_results=20)
     json_response = get_response(url=url[0], headers=headers, params=url[1])
 
-    # print(json.dumps(json_response, indent=4))
-    with open('test.txt', 'w+') as teeee:
-        json.dump(json_response, teeee, indent=2)
+    # for testing only
+    # # print(json.dumps(json_response, indent=4))
+    # with open('test.txt', 'w+') as teeee:
+    #     json.dump(json_response, teeee, indent=2)
 
     return json_response
 
 
-def get_hashtag(tag_info):
+def get_hashtag(tag_info: dict):
     tag = str(tag_info['tag']).strip()
-    # sending only hashtag
     hashtag = str('#' + tag + '\n')
     return hashtag
 
@@ -73,10 +74,12 @@ def send_tweets_to_spark(http_resp, tcp_connection):
         try:
             hashtag_list = tweet['entities']['hashtags']
             for tag_info in hashtag_list:
-                tag = get_hashtag(tag_info)
-                print(f"Hashtag: {tag.strip()}")
-                tcp_connection.send(tag.encode("utf-8"))
+                # sending only hashtag
+                hash_tag = get_hashtag(tag_info)
+                print(f"Hashtag: {hash_tag}")
+                tcp_connection.send(hash_tag.encode("utf-8"))
         except KeyError:
+            print("No hashtag found in current tweet, moving on...")
             continue
         except BrokenPipeError:
             exit("Pipe Broken, Exiting...")

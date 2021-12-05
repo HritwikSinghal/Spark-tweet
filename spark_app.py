@@ -12,10 +12,6 @@ os.environ["SPARK_LOCAL_HOSTNAME"] = "localhost"
 
 def send_data(tags: dict) -> None:
     url = 'http://localhost:5001/updateData'
-
-    # request_data = {'label': str(top_tags), 'data': str(tags_count)}
-    # response = requests.post(url, data=request_data)
-
     response = requests.post(url, json=tags)
 
 

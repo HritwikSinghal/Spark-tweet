@@ -12,14 +12,12 @@ categoryValues = []
 tags = {}
 
 
-def get_top_players(data, n=20, order=True):
+def get_top_players(data, n=20):
     """Get top n players by score.
     Returns a dictionary or an `OrderedDict` if `order` is true.
     """
     top = sorted(data.items(), key=lambda x: x[1], reverse=True)[:n]
-    if order:
-        return OrderedDict(top)
-    return dict(top)
+    return OrderedDict(top)
 
 
 @app.route("/")
@@ -43,12 +41,10 @@ def update_data():
     data = ast.literal_eval(request.data.decode("utf-8"))
 
     tags[data['hashtag']] = data['count']
-
     sorted_tags = get_top_players(tags)
 
     categoryValues.clear()
     dataValues.clear()
-
     categoryValues = [x for x in sorted_tags]
     dataValues = [tags[x] for x in sorted_tags]
 

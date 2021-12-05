@@ -58,7 +58,7 @@ def new():
     # And then start the streaming computation using start().
 
     # Start running the query that prints the running counts to the console
-    # query = wordCounts.writeStream.outputMode("complete").format("json",).start()
+    # query = wordCounts.writeStream.outputMode("complete").format("console").start()
     query = wordCounts.writeStream.foreach(process_row).outputMode('Update').start()
     # print(type(query))          # class 'pyspark.sql.streaming.StreamingQuery'
 

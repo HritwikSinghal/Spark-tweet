@@ -53,9 +53,10 @@ def get_tweet_data(next_token=None, query='corona', max_results=20):
     json_response = get_response(url=url[0], headers=headers, params=url[1])
 
     # for testing only
-    # # print(json.dumps(json_response, indent=4))
-    # with open('test.txt', 'w+') as teeee:
-    #     json.dump(json_response, teeee, indent=2)
+    # print(json.dumps(json_response, indent=4))
+    import json
+    with open('test.txt', 'w+') as teeee:
+        json.dump(json_response, teeee, indent=2)
 
     return json_response
 

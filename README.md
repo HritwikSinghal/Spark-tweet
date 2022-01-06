@@ -15,20 +15,16 @@
 
 ---
 
-This is Our Project for the Cloud Computing Course. 
-This project will fetch recent tweets based on “keywords” and “pages”, 
-using Twitter API v2, filter hashtags from those tweets and give those hashtags 
-to spark streaming for processing. After that it will launch a flask web server 
-on localhost:5001 to view the data in a visual dashboard powered by ApexCharts.
+This project will fetch recent tweets based on “keywords” using Twitter API v2, filter hashtags from those tweets and give them
+to Apache Spark streaming for processing. After that it will launch a flask web server on localhost:5001
+to view the data in a visual dashboard powered by ApexCharts.
 
 --- 
 
 ### Introduction
 
-We are Using Apache Spark streaming, Real-Time Analytics engine, 
-to process tweets retrieved from Twitter API and identify the trending hashtags 
-from them based on a certain keywords and, finally, 
-represent the data in a real-time dashboard using flask web framework.
+We are Using Apache Spark streaming, Real-Time Analytics engine, to process tweets retrieved from Twitter API and identify the trending hashtags
+from them based on a certain keywords and, finally, represent the data in a real-time dashboard using flask web framework.
 
 ### Limitations
 
